@@ -1,3 +1,6 @@
+
+
+
 <template>
   <div class="wrapper">
     <video class="video" playsinline id="vid">
@@ -24,6 +27,7 @@
         </li>
       </ul>
     </div>
+    <Books :filtered="filtered" v-if="filtered.length"></Books>
     <div class="back-link">
       <router-link to="/hall" class="link">назад в холл </router-link>
       <img src="../assets/hall-img.png" class="hall-img" />
@@ -31,9 +35,16 @@
   </div>
 </template>
 <script>
+import Books from "./Books.vue";
+
 export default {
+  name: "Library",
+  components: {
+    Books,
+  },
   data() {
     return {
+      filtered: [],
       categories: [
         { id: "cardio", name: "Кардиология" },
         { id: "qwe", name: "qwe" },
@@ -55,7 +66,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this);
     $(".video")
       .parent()
       .click(function () {
@@ -101,7 +111,7 @@ export default {
   },
   methods: {
     showBooks: function (id) {
-      console.log(this.books.filter((el) => el.categories.includes(id)));
+      this.filtered = this.books.filter((el) => el.categories.includes(id));
     },
   },
 };
@@ -178,6 +188,7 @@ export default {
   align-items: center;
   background-color: #867d6b;
   letter-spacing: 1px;
+  max-width: 26vw;
 }
 
 .select__head {
@@ -194,6 +205,7 @@ export default {
   flex-wrap: nowrap;
   align-items: center;
   padding: 0 10px;
+  max-width: 26vw;
 }
 
 .select__head img {
@@ -227,6 +239,7 @@ export default {
   scrollbar-width: thin;
   overscroll-behavior: contain;
   font-size: 1vw;
+  max-width: 26vw;
 }
 
 .select__list::-webkit-scrollbar {

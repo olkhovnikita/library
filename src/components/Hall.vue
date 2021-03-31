@@ -21,6 +21,7 @@
 </template>
 <script>
 export default {
+  name: "Hall",
   mounted() {
     $(".video")
       .parent()

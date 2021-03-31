@@ -7,16 +7,17 @@
 <script>
 import Hall from "./components/Hall.vue";
 import Library from "./components/Library.vue";
+import Books from "./components/Books.vue";
 import router from "./router/index.js";
 
 export default {
-
-
+  
   name: "App",
   router,
   components: {
     Hall,
     Library,
+    Books,
   },
 };
 </script>
