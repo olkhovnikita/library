@@ -57,10 +57,16 @@ export default {
           categories: ["cardio"],
         },
         {
-          name: "bookOne",
+          name: "book2",
           img: "imd.png",
           url: "url.ru",
           categories: ["qwe", "cardio"],
+        },
+        {
+          name: "book3",
+          img: "imd.png",
+          url: "url.ru",
+          categories: ["cardio", "qwe"],
         },
       ],
     };
