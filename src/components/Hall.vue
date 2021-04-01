@@ -8,14 +8,12 @@
     </video>
     <div class="playpause"></div>
     <div id="links">
-      <div class="cinema-link">
-        <img src="../assets/cin-img.png" class="cin-img" />
-        <router-link to="/cinema" class="link">Кинозал </router-link>
-      </div>
-      <div class="library-link">
-        <router-link to="/library" class="link">Библиотека </router-link>
-        <img src="../assets/lib-img.png" class="lib-img" />
-      </div>
+      <router-link to="/cinema" class="cinema-link link"
+        >Кинозал <img src="../assets/cin-img.png" class="cin-img"
+      /></router-link>
+      <router-link to="/library" class="library-link link"
+        >Библиотека <img src="../assets/lib-img.png" class="lib-img"
+      /></router-link>
     </div>
   </div>
 </template>
@@ -30,11 +28,14 @@ export default {
           $(this).children(".video").get(0).play();
           $(this).children(".playpause").fadeOut();
           document.querySelector("#links").style.display = "flex";
+        } else {
+          document.querySelector("#links").style.display = "none";
         }
       });
     var nextVideo =
       "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4";
     var videoPlayer = document.getElementById("vid");
+    videoPlayer.setAttribute("loop", "loop");
     videoPlayer.onended = function () {
       videoPlayer.src = nextVideo;
     };
@@ -92,6 +93,10 @@ export default {
   align-items: center;
   background-color: #867d6b;
   letter-spacing: 1px;
+  animation-name: fadein;
+  animation-fill-mode: both;
+  animation-timing-function: ease-in;
+  animation-duration: 2s;
 }
 
 .link {
@@ -107,5 +112,14 @@ export default {
 .lib-img {
   max-width: 100%;
   width: 4vw;
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

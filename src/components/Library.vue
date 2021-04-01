@@ -9,29 +9,33 @@
         type="video/mp4"
       />
     </video>
-    <div class="playpause"></div>
+    <button type="button" class="playpause"></button>
     <div class="select">
-      <input class="select__input" type="hidden" name="" />
-      <div class="select__head">
-        <p>выбрать тему</p>
+      <button type="button" class="select__head">
+        <span>выбрать тему</span>
         <img src="../assets/arrow.png" alt="" />
-      </div>
+      </button>
       <ul class="select__list" style="display: none">
         <li
           class="select__item"
           v-for="category in categories"
           v-bind:key="category.id"
-          @click="showBooks(category.id)"
         >
-          {{ category.name }}
+          <button type="button" @click="showBooks(category.id)">
+            {{ category.name }}
+          </button>
         </li>
       </ul>
     </div>
-    <Books :filtered="filtered" v-if="filtered.length"></Books>
-    <div class="back-link">
-      <router-link to="/hall" class="link">назад в холл </router-link>
-      <img src="../assets/hall-img.png" class="hall-img" />
-    </div>
+    <Books
+      :filtered="filtered"
+      v-on:set-show-modal="showModal = $event"
+      v-if="showModal"
+    ></Books>
+    <router-link class="back-link link" to="/"
+      >назад в холл <img src="../assets/hall-img.png" class="hall-img"
+    /></router-link>
+    <audio :src="audioSrc"></audio>
   </div>
 </template>
 <script>
@@ -44,7 +48,9 @@ export default {
   },
   data() {
     return {
+      showModal: false,
       filtered: [],
+      audioSrc: "",
       categories: [
         { id: "cardio", name: "Кардиология" },
         { id: "qwe", name: "qwe" },
@@ -69,18 +75,20 @@ export default {
           categories: ["cardio", "qwe"],
         },
       ],
+      audio: ["audio/1.mp3", "audio/2.mp3", "audio/3.mp3"],
     };
   },
   mounted() {
-    $(".video")
-      .parent()
-      .click(function () {
-        if ($(this).children(".video").get(0).paused) {
-          $(this).children(".video").get(0).play();
-          $(this).children(".playpause").fadeOut();
-          document.querySelector("#links").style.display = "flex";
-        }
-      });
+    this.play(),
+      $(".video")
+        .parent()
+        .click(function () {
+          if ($(this).children(".video").get(0).paused) {
+            $(this).children(".video").get(0).play();
+            $(this).children(".playpause").fadeOut();
+            document.querySelector("#links").style.display = "flex";
+          }
+        });
     var nextVideo =
       "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4";
     var videoPlayer = document.getElementById("vid");
@@ -118,6 +126,11 @@ export default {
   methods: {
     showBooks: function (id) {
       this.filtered = this.books.filter((el) => el.categories.includes(id));
+      this.showModal = true;
+    },
+    play: function () {
+      const randomNumber = Math.floor(Math.random() * this.audio.length);
+      this.audioSrc = this.audio[randomNumber];
     },
   },
 };
@@ -194,14 +207,18 @@ export default {
   align-items: center;
   background-color: #867d6b;
   letter-spacing: 1px;
-  max-width: 26vw;
+}
+
+.select__item button {
+  width: 100%;
+  display: block;
+  padding: 10px 15px;
 }
 
 .select__head {
   width: 100%;
-  max-width: 100%;
   font-family: Arial;
-  font-size: 2vw;
+  font-size: 14px;
   font-weight: 900;
   text-transform: uppercase;
   color: #ffffff;
@@ -211,16 +228,12 @@ export default {
   flex-wrap: nowrap;
   align-items: center;
   padding: 0 10px;
-  max-width: 26vw;
+  min-width: 400px;
 }
 
 .select__head img {
   width: 2vw;
   margin-left: 10px;
-}
-
-.select__head.open::after {
-  transform: translateY(50%) rotate(180deg);
 }
 
 .select__list {
@@ -245,7 +258,7 @@ export default {
   scrollbar-width: thin;
   overscroll-behavior: contain;
   font-size: 1vw;
-  max-width: 26vw;
+  width: 100%;
 }
 
 .select__list::-webkit-scrollbar {
@@ -262,12 +275,11 @@ export default {
 .select__list .select__item {
   position: relative;
   border-top: 1px solid rgba(224, 229, 231, 0.5);
-  padding: 10px 15px;
   cursor: pointer;
   list-style-type: none;
 }
 
-.select__list .select__item:hover {
+.select__list .select__item:hover button {
   background-color: rgba(224, 229, 231, 0.5);
 }
 </style>

@@ -6,7 +6,7 @@ import Library from '../components/Library.vue'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/hall', component: Hall },
+  { path: '/', component: Hall },
   { path: '/library', component: Library },
 ]
 

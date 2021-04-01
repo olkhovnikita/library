@@ -1,38 +1,47 @@
 <template>
-  <div class="books-modal">
-    <a v-for="book in filtered" v-bind:key="book.id" :href="book.url">
-      <img class="books-img" :src="book.img" />
-      <div class="books-name">{{ book.name }}</div>
-    </a>
-    <img class="cancel" src="../assets/cancel.png" alt="cancel" @click="closeDiv" />
+  <div class="overlay">
+    <div class="books-modal">
+      <a v-for="book in filtered" v-bind:key="book.id" :href="book.url">
+        <img class="books-img" :src="book.img" />
+        <div class="books-name">{{ book.name }}</div>
+      </a>
+      <button type="button" @click="$emit('set-show-modal', false)">
+        <img class="cancel" src="../assets/cancel.png" alt="cancel" />
+      </button>
+    </div>
   </div>
 </template>
 <script>
 export default {
-  props: ["filtered"],
+  props: ["filtered", "set-show-modal"],
   name: "Books",
-  methods: {
-    closeDiv: function () {
-      var cancel = document.querySelector(".books-modal");
-      cancel.style = "display:none";
-    },
-  },
 };
 </script>
 <style scoped>
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
 .books-modal {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  max-width: 80vw;
-  position: absolute;
-  top: 0;
-  left: 0;
   padding: 82px 92px;
-  margin: 60px;
   background-color: #dfd6c9;
-  box-shadow: 0 0 0 99999px rgba(0, 0, 0, 0.8);
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  right: 50px;
+  bottom: 50px;
+  overflow-y: auto;
+}
+.closed {
+  display: none;
 }
 
 .cancel {
@@ -40,6 +49,7 @@ export default {
   top: 10px;
   right: 10px;
   max-width: 100%;
+  cursor: pointer;
 }
 
 .books-modal img {

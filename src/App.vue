@@ -1,22 +1,17 @@
 <template>
-  <div id="app">
-    <router-view></router-view>
-  </div>
+  <router-view></router-view>
 </template>
 
 <script>
-import Hall from "./components/Hall.vue";
-import Library from "./components/Library.vue";
 import Books from "./components/Books.vue";
 import router from "./router/index.js";
 
 export default {
-  
   name: "App",
   router,
   components: {
-    Hall,
-    Library,
+    // Hall,
+    // Library,
     Books,
   },
 };
