@@ -1,31 +1,39 @@
-
-
-
 <template>
   <div class="wrapper">
-    <video class="video" playsinline id="vid">
-      <source
-        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        type="video/mp4"
-      />
-    </video>
+    <video
+      class="video"
+      playsinline
+      id="vid"
+      :src="videoSrc"
+      type="video/mp4"
+    ></video>
+    <div id="empty" @click="play"></div>
     <button type="button" class="playpause"></button>
-    <div class="select">
-      <button type="button" class="select__head">
-        <span>выбрать тему</span>
-        <img src="../assets/arrow.png" alt="" />
-      </button>
-      <ul class="select__list" style="display: none">
-        <li
-          class="select__item"
-          v-for="category in categories"
-          v-bind:key="category.id"
+    <div class="categories">
+      <div class="select" @click="changeStyle">
+        <button
+          type="button"
+          class="select-btn"
+          @click="showDropDown = !showDropDown"
         >
-          <button type="button" @click="showBooks(category.id)">
-            {{ category.name }}
-          </button>
-        </li>
-      </ul>
+          выбрать тему
+          <img src="../assets/arrow.png" alt="arrow" />
+        </button>
+        <div
+          class="select-items"
+          :style="showDropDown ? 'display:block' : 'display:none'"
+        >
+          <div v-for="category in categories" v-bind:key="category.id">
+            <button
+              type="button"
+              class="option"
+              @click="showBooks(category.id)"
+            >
+              {{ category.name }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <Books
       :filtered="filtered"
@@ -35,7 +43,7 @@
     <router-link class="back-link link" to="/"
       >назад в холл <img src="../assets/hall-img.png" class="hall-img"
     /></router-link>
-    <audio :src="audioSrc"></audio>
+    <button type="button" class="skip" @click="skip">Пропустить</button>
   </div>
 </template>
 <script>
@@ -48,9 +56,10 @@ export default {
   },
   data() {
     return {
+      showDropDown: false,
+      videoSrc: "/videos/library.mp4",
       showModal: false,
       filtered: [],
-      audioSrc: "",
       categories: [
         { id: "cardio", name: "Кардиология" },
         { id: "qwe", name: "qwe" },
@@ -75,68 +84,91 @@ export default {
           categories: ["cardio", "qwe"],
         },
       ],
-      audio: ["audio/1.mp3", "audio/2.mp3", "audio/3.mp3"],
+      videos: [
+        "/videos/jokes-in-library/joke1.mp4",
+        "/videos/jokes-in-library/joke2.mp4",
+        "/videos/jokes-in-library/joke3.mp4",
+        "/videos/jokes-in-library/joke4.mp4",
+      ],
     };
   },
   mounted() {
-    this.play(),
-      $(".video")
-        .parent()
-        .click(function () {
-          if ($(this).children(".video").get(0).paused) {
-            $(this).children(".video").get(0).play();
-            $(this).children(".playpause").fadeOut();
-            document.querySelector("#links").style.display = "flex";
-          }
-        });
-    var nextVideo =
-      "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4";
+    $(".video")
+      .parent()
+      .click(function () {
+        if ($(this).children(".video").get(0).paused) {
+          $(this).children(".video").get(0).play();
+          $(this).children(".playpause").fadeOut();
+          document.querySelector("#links").style.display = "flex";
+        }
+      });
+    var nextVideo = "/videos/library-demo.mp4";
     var videoPlayer = document.getElementById("vid");
     videoPlayer.onended = function () {
-      videoPlayer.src = nextVideo;
+      if (nextVideo == "/videos/library-demo") {
+        videoPlayer.setAttribute("autoplay", "");
+        videoPlayer.setAttribute("loop", "");
+        videoPlayer.src = nextVideo;
+      } else {
+        videoPlayer.setAttribute("autoplay", "");
+        videoPlayer.src = nextVideo;
+      }
+      document.getElementById("empty").style = "display:block";
     };
-    jQuery(($) => {
-      $(".select").on("click", ".select__head", function () {
-        if ($(this).hasClass("open")) {
-          $(this).removeClass("open");
-          $(this).next().fadeOut();
-        } else {
-          $(".select__head").removeClass("open");
-          $(".select__list").fadeOut();
-          $(this).addClass("open");
-          $(this).next().fadeIn();
-        }
-      });
-
-      $(".select").on("click", ".select__item", function () {
-        $(".select__head").removeClass("open");
-        $(this).parent().fadeOut();
-        $(this).parent().prev().text($(this).text());
-        $(this).parent().prev().prev().val($(this).text());
-      });
-
-      $(document).click(function (e) {
-        if (!$(e.target).closest(".select").length) {
-          $(".select__head").removeClass("open");
-          $(".select__list").fadeOut();
-        }
-      });
-    });
   },
   methods: {
     showBooks: function (id) {
       this.filtered = this.books.filter((el) => el.categories.includes(id));
       this.showModal = true;
     },
-    play: function () {
-      const randomNumber = Math.floor(Math.random() * this.audio.length);
-      this.audioSrc = this.audio[randomNumber];
+    play: function (event) {
+      event.preventDefault();
+      const randomNumber = Math.floor(Math.random() * this.videos.length);
+      this.videoSrc = this.videos[randomNumber];
+    },
+    skip: function () {
+      this.videoSrc = "/videos/library-demo.mp4";
+      document.querySelector(".skip").style = "display:none";
+      document.getElementById("empty").style = "display:block";
+    },
+    changeStyle: function () {
+      if (this.showDropDown) {
+        document.querySelector(".select-btn").classList.add("restyle");
+      } else {
+        document.querySelector(".select-btn").classList.remove("restyle");
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+#empty {
+  display: none;
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  width: 31%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  left: 47%;
+}
+.skip {
+  display: none;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  border: 4px solid #fbfdff;
+  border-radius: 14px;
+  padding: 5px 7px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: rgba(134, 125, 107, 0.5);
+  letter-spacing: 1px;
+}
 .back-link {
   border: 3px solid #fbfdff;
   border-radius: 14px;
@@ -144,7 +176,7 @@ export default {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  background-color: #867d6b;
+  background-color: rgba(134, 125, 107, 0.5);
   letter-spacing: 1px;
   position: absolute;
   bottom: 10px;
@@ -179,10 +211,10 @@ export default {
   width: 100%;
 }
 .playpause {
-  background-image: url(http://png-4.findicons.com/files/icons/2315/default_icon/256/media_play_pause_resume.png);
+  background-image: url(../assets/play.png);
   background-repeat: no-repeat;
-  width: 50%;
-  height: 50%;
+  max-width: 50px;
+  max-height: 50px;
   position: absolute;
   left: 0%;
   right: 0%;
@@ -194,93 +226,43 @@ export default {
 }
 
 .select {
+  position: relative;
+}
+
+.categories {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  display: block;
-  margin-bottom: 20px;
-  border: 3px solid #fbfdff;
-  border-radius: 14px;
-  padding: 5px 7px;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  background-color: #867d6b;
-  letter-spacing: 1px;
+  top: 20px;
+  left: 20px;
+  user-select: none;
 }
 
-.select__item button {
-  width: 100%;
-  display: block;
-  padding: 10px 15px;
-}
-
-.select__head {
-  width: 100%;
+.select-btn,
+.select-items {
+  background-color: rgba(134, 125, 107, 0.5);
   font-family: Arial;
-  font-size: 14px;
+  font-size: 2vw;
   font-weight: 900;
   text-transform: uppercase;
   color: #ffffff;
-  cursor: pointer;
+  min-width: 439px;
+  border: 4px solid #fbfdff;
+  border-radius: 15px;
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
   align-items: center;
-  padding: 0 10px;
-  min-width: 400px;
+  justify-content: space-around;
+  flex-wrap: nowrap;
 }
-
-.select__head img {
-  width: 2vw;
-  margin-left: 10px;
-}
-
-.select__list {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #fff;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  margin-top: 5px;
-  max-height: 205px;
-  overflow-x: hidden;
+.select-items {
   overflow-y: auto;
-  z-index: 100;
-  margin: 0;
-  padding: 0;
-  font-size: 14px;
-  color: #424348;
-  scrollbar-color: dark;
-  scrollbar-width: thin;
-  overscroll-behavior: contain;
-  font-size: 1vw;
-  width: 100%;
+  border-top: none;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  max-height: 431px;
 }
-
-.select__list::-webkit-scrollbar {
-  width: 7px;
-  background-color: #f8f9fa;
-  padding: 5px;
-}
-
-.select__list::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-color: #d9d9d9;
-}
-
-.select__list .select__item {
-  position: relative;
-  border-top: 1px solid rgba(224, 229, 231, 0.5);
-  cursor: pointer;
-  list-style-type: none;
-}
-
-.select__list .select__item:hover button {
-  background-color: rgba(224, 229, 231, 0.5);
+.restyle {
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 </style>
 

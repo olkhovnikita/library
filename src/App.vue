@@ -4,15 +4,15 @@
 
 <script>
 import Books from "./components/Books.vue";
+import Films from "./Films.vue";
 import router from "./router/index.js";
 
 export default {
   name: "App",
   router,
   components: {
-    // Hall,
-    // Library,
     Books,
+    Films,
   },
 };
 </script>

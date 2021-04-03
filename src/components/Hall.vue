@@ -1,25 +1,51 @@
 <template>
   <div class="wrapper">
-    <video class="video" playsinline id="vid">
-      <source
-        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        type="video/mp4"
-      />
-    </video>
-    <div class="playpause"></div>
-    <div id="links">
-      <router-link to="/cinema" class="cinema-link link"
-        >Кинозал <img src="../assets/cin-img.png" class="cin-img"
-      /></router-link>
-      <router-link to="/library" class="library-link link"
-        >Библиотека <img src="../assets/lib-img.png" class="lib-img"
-      /></router-link>
-    </div>
+    <video
+      :src="videoSrc"
+      type="video/mp4"
+      class="video"
+      playsinline
+      id="vid"
+    ></video>
+    <div id="empty" @click="play"></div>
+    <button type="button" class="playpause"></button>
+    <router-link to="/cinema" class="cinema-link link"
+      >Кинозал <img src="../assets/cin-img.png" class="cin-img" />
+    </router-link>
+    <router-link to="/library" class="library-link link"
+      >Библиотека <img src="../assets/lib-img.png" class="lib-img"
+    /></router-link>
+    <button type="button" class="skip" @click="skip">Пропустить</button>
   </div>
 </template>
 <script>
 export default {
   name: "Hall",
+  methods: {},
+  data: function () {
+    return {
+      videoSrc: "/videos/hall.mp4",
+      videos: [
+        "/videos/jokes-in-hall/joke1.mp4",
+        "/videos/jokes-in-hall/joke2.mp4",
+        "/videos/jokes-in-hall/joke3.mp4",
+        "/videos/jokes-in-hall/joke4.mp4",
+        "/videos/jokes-in-hall/joke5.mp4",
+      ],
+    };
+  },
+  methods: {
+    skip: function () {
+      this.videoSrc = "/videos/hall-demo.mp4";
+      document.querySelector(".skip").style = "display:none";
+      document.getElementById("empty").style = "display:block";
+    },
+    play: function (event) {
+      event.preventDefault();
+      const randomNumber = Math.floor(Math.random() * this.videos.length);
+      this.videoSrc = this.videos[randomNumber];
+    },
+  },
   mounted() {
     $(".video")
       .parent()
@@ -27,22 +53,51 @@ export default {
         if ($(this).children(".video").get(0).paused) {
           $(this).children(".video").get(0).play();
           $(this).children(".playpause").fadeOut();
-          document.querySelector("#links").style.display = "flex";
-        } else {
-          document.querySelector("#links").style.display = "none";
+
+          document.querySelector(".cinema-link").style.display = "block";
+          document.querySelector(".library-link").style.display = "block";
         }
       });
-    var nextVideo =
-      "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4";
+    var nextVideo = "/videos/hall-demo.mp4";
     var videoPlayer = document.getElementById("vid");
-    videoPlayer.setAttribute("loop", "loop");
+
     videoPlayer.onended = function () {
-      videoPlayer.src = nextVideo;
+      if (nextVideo == "/videos/hall-demo") {
+        videoPlayer.setAttribute("autoplay", "");
+        videoPlayer.setAttribute("loop", "");
+        videoPlayer.src = nextVideo;
+      } else {
+        videoPlayer.setAttribute("autoplay", "");
+        videoPlayer.src = nextVideo;
+      }
+      document.getElementById("empty").style = "display:block";
     };
   },
 };
 </script>
 <style scoped>
+#empty {
+  display: none;
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  width: 20%;
+  user-select: none;
+}
+.skip {
+  display: none;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  border: 4px solid #fbfdff;
+  border-radius: 14px;
+  padding: 5px 7px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: rgba(134, 125, 107, 0.5);
+  letter-spacing: 1px;
+}
 .video {
   width: 100vw;
   height: 100vh;
@@ -57,7 +112,7 @@ export default {
   width: 100%;
 }
 .playpause {
-  background-image: url(http://png-4.findicons.com/files/icons/2315/default_icon/256/media_play_pause_resume.png);
+  background-image: url(../assets/play.png);
   background-repeat: no-repeat;
   width: 50%;
   height: 50%;
@@ -69,20 +124,8 @@ export default {
   margin: auto;
   background-size: contain;
   background-position: center;
+  background-color: transparent;
 }
-
-#links {
-  display: none;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  position: absolute;
-  top: 50%;
-  z-index: 1;
-  width: 60vw;
-  height: 50vh;
-}
-
 .library-link,
 .cinema-link {
   border: 4px solid #fbfdff;
@@ -91,12 +134,23 @@ export default {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  background-color: #867d6b;
+  background-color: rgba(134, 125, 107, 0.5);
   letter-spacing: 1px;
   animation-name: fadein;
   animation-fill-mode: both;
   animation-timing-function: ease-in;
   animation-duration: 2s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-325%);
+  display: none;
+}
+.library-link {
+  right: 13%;
+}
+
+.cinema-link {
+  left: 13%;
 }
 
 .link {

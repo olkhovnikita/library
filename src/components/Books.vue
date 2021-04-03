@@ -28,7 +28,7 @@ export default {
 }
 .books-modal {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   padding: 82px 92px;
@@ -39,9 +39,11 @@ export default {
   right: 50px;
   bottom: 50px;
   overflow-y: auto;
+  z-index: 99;
 }
-.closed {
-  display: none;
+
+.books-modal a {
+  margin: 20px;
 }
 
 .cancel {
